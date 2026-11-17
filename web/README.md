@@ -11,6 +11,8 @@ Mesmo sistema do app desktop, como site protegido por senha, rodando no **Cloudf
 |---|---|---|
 | ![](docs/intimacoes.png) | ![](docs/google-ads.png) | ![](docs/celular.png) |
 
+> **Importante — DJEN só aceita acessos do Brasil.** Buscas feitas pelo site (você acessando do Brasil) saem por um datacenter brasileiro do Cloudflare e funcionam. A busca agendada (cron) pode rodar fora do país e ser recusada; por isso, ao abrir o site, o sistema busca sozinho se não houve busca bem-sucedida nas últimas 3 horas. O resultado de cada busca aparece em “Última busca”.
+
 ## Publicar pela primeira vez
 
 Pré-requisitos: conta gratuita no [Cloudflare](https://dash.cloudflare.com/sign-up) e [Node.js 20+](https://nodejs.org).

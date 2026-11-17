@@ -53,6 +53,11 @@ test("DJEN: paginação e parâmetros", async () => {
   await assert.rejects(dje.buscar({ inicio: "2026-11-01", fim: "2026-11-10" }, { fetchFn }), dje.DjeErro);
 });
 
+test("DJEN: bloqueio geográfico", async () => {
+  const fetchFn = async () => new Response("<H1>403 ERROR</H1>configured to block access from your country", { status: 403 });
+  await assert.rejects(dje.buscar({ oab: "1", inicio: "2026-11-01", fim: "2026-11-02" }, { fetchFn }), { message: dje.GEOBLOQUEIO });
+});
+
 test("prazo em dias úteis", () => {
   assert.equal(dje.prazoDiasUteis("2026-11-06", 15), "2026-11-30");
   assert.equal(dje.prazoDiasUteis("2026-11-06", 5, ["2026-11-10"]), "2026-11-17");

@@ -6,6 +6,9 @@ const POR_PAGINA = 100;
 
 export class DjeErro extends Error {}
 
+export const GEOBLOQUEIO = "O DJEN só aceita consultas originadas no Brasil e esta saiu de um servidor no exterior. " +
+  "Faça a busca pelo site (seu acesso parte do Brasil) — o sistema já tenta isso automaticamente ao abrir.";
+
 const ENTIDADES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
 
 export function limparHtml(texto) {
@@ -99,7 +102,12 @@ async function getJson(url, fetchFn, tentativas = 3) {
     try {
       const r = await fetchFn(url, { headers: { Accept: "application/json", "User-Agent": "EscritorioGomes/1.0" } });
       if (r.status === 429) { await esperar(2000 * (t + 1)); continue; }
-      if (!r.ok) throw new DjeErro(`DJEN respondeu ${r.status}: ${(await r.text()).slice(0, 200)}`);
+      if (!r.ok) {
+        const corpo = await r.text();
+        if (r.status === 403 && /block access from your country/i.test(corpo))
+          throw new DjeErro(GEOBLOQUEIO);
+        throw new DjeErro(`DJEN respondeu ${r.status}: ${corpo.slice(0, 200)}`);
+      }
       return await r.json();
     } catch (e) {
       erro = e;

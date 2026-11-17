@@ -123,7 +123,8 @@ async function atualizarCabecalho() {
 }
 
 async function iniciar() {
-  try { await atualizarCabecalho(); } catch (e) { if (e.status === 401) return; avisar(e.message, true); return; }
+  let me;
+  try { me = await atualizarCabecalho(); } catch (e) { if (e.status === 401) return; avisar(e.message, true); return; }
   $("#tela-login").hidden = true;
   $("#tela-app").hidden = false;
   const f = $("#form-djen");
@@ -136,6 +137,18 @@ async function iniciar() {
   let aba = "intimacoes";
   try { aba = localStorage.getItem("aba") || aba; } catch {}
   trocarAba(aba);
+  // O DJEN só responde a acessos do Brasil; a busca agendada pode rodar no exterior.
+  // Se não há busca bem-sucedida nas últimas 3 horas, busca agora a partir do navegador.
+  const ultimaOk = me.ultima_ok ? Date.parse(me.ultima_ok.replace(" ", "T") + "Z") : 0;
+  if (cfgEscritorio.oab_numero && Date.now() - ultimaOk > 3 * 36e5) buscaAutomatica();
+}
+
+async function buscaAutomatica() {
+  try {
+    const r = await api("/api/intimacoes/buscar", { method: "POST", body: { oab: cfgEscritorio.oab_numero, uf: cfgEscritorio.oab_uf, incluir_extras: true } });
+    if (r.novas) avisar(`${r.novas} nova(s) intimação(ões) no DJEN.`);
+  } catch { /* o erro fica registrado em "Última busca" */ }
+  carregarIntimacoes();
 }
 
 // ------------------------------------------------------------------ intimações

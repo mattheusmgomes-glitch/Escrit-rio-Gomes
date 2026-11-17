@@ -115,7 +115,8 @@ async function api(request, env, url) {
     const cfg = await lerConfig(db);
     const naoLidas = (await db.prepare("SELECT COUNT(*) AS n FROM intimacoes WHERE lida = 0").first()).n;
     const ultima = await db.prepare("SELECT * FROM log_buscas ORDER BY id DESC LIMIT 1").first();
-    return json({ escritorio: cfg.escritorio, nao_lidas: naoLidas, ultima_busca: ultima });
+    const ok = await db.prepare("SELECT em FROM log_buscas WHERE erro IS NULL ORDER BY id DESC LIMIT 1").first();
+    return json({ escritorio: cfg.escritorio, nao_lidas: naoLidas, ultima_busca: ultima, ultima_ok: ok?.em ?? null });
   }
   if (p === "/api/config" && m === "GET") {
     const cfg = await lerConfig(db);
