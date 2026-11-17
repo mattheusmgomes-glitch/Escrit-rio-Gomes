@@ -1,0 +1,27 @@
+name = "escritorio-gomes"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "escritorio-gomes"
+# Preencha com o ID exibido por: npx wrangler d1 create escritorio-gomes
+database_id = "00000000-0000-0000-0000-000000000000"
+
+# Busca automática de intimações no DJEN: 8h, 12h e 17h (horário de Brasília = UTC-3)
+[triggers]
+crons = ["0 11,15,20 * * 1-5"]
+
+[vars]
+GOOGLE_ADS_API_VERSION = "v26"
+
+# Segredos (configure com: npx wrangler secret put NOME)
+#   APP_PASSWORD                senha de acesso ao sistema
+#   SESSION_SECRET              texto aleatório longo para assinar a sessão
+#   GOOGLE_ADS_DEVELOPER_TOKEN, GOOGLE_ADS_CLIENT_ID,
+#   GOOGLE_ADS_CLIENT_SECRET,   GOOGLE_ADS_REFRESH_TOKEN
+#   PLATAFORMA_TOKEN            token da API da plataforma do escritório

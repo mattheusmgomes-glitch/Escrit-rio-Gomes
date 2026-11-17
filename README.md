@@ -1,6 +1,11 @@
 # Sistema Integrado — Gomes Advogados
 
-Aplicativo desktop (Windows, macOS e Linux) que reúne em uma única janela:
+Disponível em duas versões:
+
+- **Site no Cloudflare** (acesso pelo navegador e celular, busca automática de intimações) — veja [`web/README.md`](web/README.md).
+- **Aplicativo desktop** (Windows, macOS e Linux), descrito abaixo.
+
+As duas reúnem:
 
 1. **Intimações (DJE)** — busca automática no **DJEN** (Diário de Justiça Eletrônico Nacional, CNJ) pela OAB, parte, processo ou tribunal; marca lidas/não lidas, vincula ao cliente, calcula prazo em dias úteis e exporta CSV.
 2. **Clientes** — cadastro completo (PF/PJ) com validação de CPF/CNPJ, preenchimento por CEP (ViaCEP) e envio à plataforma de gestão do escritório via API.

@@ -1,0 +1,14 @@
+{
+  "name": "escritorio-gomes-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler d1 migrations apply escritorio-gomes --remote && wrangler deploy",
+    "db:local": "wrangler d1 migrations apply escritorio-gomes --local",
+    "test": "node --test test/*.test.js"
+  },
+  "devDependencies": {
+    "wrangler": "4.163.0"
+  }
+}

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Gomes Advogados — Sistema</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231e3a5f'/><text x='16' y='22' font-size='17' text-anchor='middle' fill='%23e8c872' font-family='Georgia,serif' font-weight='bold'>G</text></svg>">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <!-- Login -->
+  <main id="tela-login" class="login" hidden>
+    <form id="form-login" class="cartao login-cartao">
+      <div class="marca grande"><span class="logo">G</span><div><strong>Gomes Advogados</strong><small>Sistema integrado</small></div></div>
+      <label>Senha do escritório<input type="password" name="senha" autocomplete="current-password" required autofocus></label>
+      <button class="primario" type="submit">Entrar</button>
+      <p class="erro" id="erro-login" role="alert"></p>
+    </form>
+  </main>
+
+  <!-- App -->
+  <div id="tela-app" hidden>
+    <header class="topo">
+      <div class="marca"><span class="logo">G</span><div><strong id="nome-escritorio">Gomes Advogados</strong><small id="oab-escritorio"></small></div></div>
+      <nav class="abas" role="tablist">
+        <button role="tab" data-aba="intimacoes" aria-selected="true">Intimações <span class="badge" id="badge-nao-lidas" hidden></span></button>
+        <button role="tab" data-aba="clientes">Clientes</button>
+        <button role="tab" data-aba="ads">Google Ads</button>
+        <button role="tab" data-aba="config">Configurações</button>
+      </nav>
+      <button class="link" id="sair">Sair</button>
+    </header>
+
+    <!-- ================= Intimações ================= -->
+    <section class="aba" id="aba-intimacoes">
+      <form class="cartao filtros" id="form-djen">
+        <h2>Buscar no Diário de Justiça Eletrônico Nacional</h2>
+        <div class="linha-campos">
+          <label>De<input type="date" name="inicio" required></label>
+          <label>Até<input type="date" name="fim" required></label>
+          <label class="curto">OAB<input name="oab" inputmode="numeric"></label>
+          <label class="mini">UF<select name="uf" data-ufs></select></label>
+          <label>Parte<input name="parte" placeholder="opcional"></label>
+          <label>Processo<input name="processo" placeholder="opcional"></label>
+          <label class="curto">Tribunal<input name="tribunal" placeholder="TJRJ"></label>
+          <button class="primario" type="submit">Buscar</button>
+        </div>
+        <p class="dica" id="ultima-busca"></p>
+      </form>
+
+      <div class="dividido">
+        <div class="cartao lista-painel">
+          <div class="barra">
+            <input type="search" id="filtro-intim" placeholder="Filtrar por texto, parte, processo, cliente…">
+            <label class="check"><input type="checkbox" id="so-nao-lidas"> Não lidas</label>
+          </div>
+          <div class="tabela-rolagem">
+            <table class="tabela" id="tabela-intim">
+              <thead><tr><th>Data</th><th>Tribunal</th><th>Processo</th><th>Tipo</th><th>Cliente</th><th>Prazo</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="barra rodape"><span id="resumo-intim"></span><button class="sec" id="csv-intim">Exportar CSV</button></div>
+        </div>
+
+        <div class="cartao detalhe" id="detalhe-intim">
+          <p class="vazio">Selecione uma intimação para ler o conteúdo.</p>
+          <div class="conteudo" hidden>
+            <button class="link voltar">← Voltar à lista</button>
+            <h3 data-campo="processo"></h3>
+            <dl class="meta">
+              <dt>Órgão</dt><dd data-campo="orgao"></dd>
+              <dt>Tipo</dt><dd data-campo="tipo"></dd>
+              <dt>Disponibilizada</dt><dd data-campo="data"></dd>
+              <dt>Destinatários</dt><dd data-campo="destinatarios"></dd>
+            </dl>
+            <pre class="texto" data-campo="texto"></pre>
+            <div class="acoes">
+              <a class="botao sec" data-campo="link" target="_blank" rel="noopener noreferrer">Abrir no tribunal</a>
+              <button class="sec" data-acao="lida"></button>
+            </div>
+            <div class="form-grade">
+              <label>Cliente<span class="junto"><select data-campo="cliente"></select><button class="sec" data-acao="vincular">Vincular</button></span></label>
+              <label>Prazo<span class="junto"><input type="number" min="1" max="365" value="15" data-campo="dias"><span>dias úteis</span><button class="sec" data-acao="calcular">Calcular</button></span></label>
+              <label>Vencimento<input data-campo="prazo" placeholder="DD/MM/AAAA"></label>
+              <label>Observação<input data-campo="observacao" placeholder="Providência, responsável…"></label>
+            </div>
+            <button class="primario" data-acao="anotar">Salvar anotações</button>
+            <p class="dica">Prazo estimado em dias úteis (CPC arts. 219 e 224), sem feriados locais ou suspensões do tribunal — confira sempre.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Clientes ================= -->
+    <section class="aba" id="aba-clientes" hidden>
+      <div class="dividido">
+        <div class="cartao lista-painel">
+          <div class="barra">
+            <input type="search" id="busca-cli" placeholder="Nome, CPF/CNPJ, e-mail, telefone, cidade…">
+            <button class="primario" id="novo-cli">+ Novo</button>
+          </div>
+          <div class="tabela-rolagem">
+            <table class="tabela" id="tabela-cli">
+              <thead><tr><th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>Plataforma</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="barra rodape"><span id="resumo-cli"></span><button class="sec" id="csv-cli">Exportar CSV</button></div>
+        </div>
+
+        <form class="cartao detalhe" id="form-cli" novalidate>
+          <button type="button" class="link voltar">← Voltar à lista</button>
+          <h3 id="titulo-cli">Novo cliente</h3>
+          <fieldset>
+            <legend>Dados do cliente</legend>
+            <div class="form-grade">
+              <label>Tipo<select name="tipo"><option value="PF">Pessoa física</option><option value="PJ">Pessoa jurídica</option></select></label>
+              <label class="largo"><span data-rotulo-nome>Nome completo *</span><input name="nome" required></label>
+              <label><span data-rotulo-doc>CPF</span><input name="cpf_cnpj" inputmode="numeric"></label>
+              <label>RG<input name="rg"></label>
+              <label>Nascimento<input name="data_nascimento" placeholder="DD/MM/AAAA"></label>
+              <label>Estado civil<select name="estado_civil"><option></option><option>Solteiro(a)</option><option>Casado(a)</option><option>Divorciado(a)</option><option>Viúvo(a)</option><option>União estável</option></select></label>
+              <label>Profissão<input name="profissao"></label>
+              <label>E-mail<input name="email" type="email"></label>
+              <label>Telefone/WhatsApp<input name="telefone" inputmode="tel" placeholder="(21) 99999-9999"></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Endereço</legend>
+            <div class="form-grade">
+              <label>CEP<input name="cep" inputmode="numeric" placeholder="00000-000"></label>
+              <label class="largo">Logradouro<input name="logradouro"></label>
+              <label>Número<input name="numero"></label>
+              <label>Complemento<input name="complemento"></label>
+              <label>Bairro<input name="bairro"></label>
+              <label>Cidade<input name="cidade"></label>
+              <label>UF<select name="uf" data-ufs></select></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Atendimento</legend>
+            <div class="form-grade">
+              <label>Área<select name="area"><option></option><option>Trabalhista</option><option>Cível</option><option>Consumidor</option><option>Família</option><option>Previdenciário</option><option>Empresarial</option><option>Tributário</option><option>Criminal</option><option>Imobiliário</option><option>Outra</option></select></label>
+              <label>Como chegou<select name="origem"><option></option><option>Google Ads</option><option>Indicação</option><option>Site</option><option>Instagram</option><option>WhatsApp</option><option>Retorno</option><option>Outra</option></select></label>
+              <label class="largo">Observações<textarea name="observacoes" rows="3"></textarea></label>
+            </div>
+          </fieldset>
+          <p class="dica" id="sync-cli"></p>
+          <div class="acoes">
+            <button class="primario" type="submit">Salvar</button>
+            <button class="sec" type="button" id="enviar-cli">Salvar e enviar à plataforma</button>
+            <button class="perigo" type="button" id="excluir-cli" hidden>Excluir</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ================= Google Ads ================= -->
+    <section class="aba" id="aba-ads" hidden>
+      <div class="cartao">
+        <div class="barra">
+          <h2>Campanhas</h2>
+          <select id="periodo-ads">
+            <option value="LAST_7_DAYS">Últimos 7 dias</option>
+            <option value="LAST_30_DAYS" selected>Últimos 30 dias</option>
+            <option value="THIS_MONTH">Este mês</option>
+            <option value="LAST_MONTH">Mês passado</option>
+            <option value="TODAY">Hoje</option>
+          </select>
+          <button class="sec" id="atualizar-ads">Atualizar</button>
+        </div>
+        <div class="kpis" id="kpis-ads"></div>
+        <div class="tabela-rolagem">
+          <table class="tabela" id="tabela-ads">
+            <thead><tr><th>Campanha</th><th>Status</th><th class="num">Orç./dia</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th class="num">CPC médio</th><th class="num">Custo</th><th class="num">Conversões</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="dica" id="aviso-ads"></p>
+      </div>
+
+      <form class="cartao" id="form-ads">
+        <h2>Novo anúncio de pesquisa</h2>
+        <div class="duas-colunas">
+          <div class="form-grade">
+            <label class="largo">Modelo<select id="modelo-ads"><option value="">— escolher modelo —</option></select></label>
+            <label class="largo">Nome da campanha<input name="nome" required placeholder="Trabalhista - RJ - Pesquisa"></label>
+            <label>Orçamento diário (R$)<input name="orcamento_diario" type="number" min="1" step="0.01" value="30" required></label>
+            <label>CPC máximo (R$)<input name="cpc_maximo" type="number" min="0.1" step="0.01" value="3" required></label>
+            <label class="largo">Página de destino<input name="url_final" type="url" placeholder="https://seusite.com.br" required></label>
+            <label>Locais<input name="locais" value="Rio de Janeiro" placeholder="Rio de Janeiro, Niterói"></label>
+            <label>Correspondência<select name="correspondencia"><option value="PHRASE">Frase</option><option value="EXACT">Exata</option><option value="BROAD">Ampla</option></select></label>
+            <label class="largo">Palavras-chave (uma por linha)<textarea name="palavras_chave" rows="6"></textarea></label>
+          </div>
+          <div class="form-grade">
+            <label class="largo">Títulos — 3 a 15, máx. 30 caracteres<textarea name="titulos" rows="6"></textarea></label>
+            <label class="largo">Descrições — 2 a 4, máx. 90 caracteres<textarea name="descricoes" rows="3"></textarea></label>
+            <div class="largo">
+              <span class="rotulo">Prévia</span>
+              <div class="previa" id="previa-ads"></div>
+              <ul class="alertas" id="alertas-ads"></ul>
+            </div>
+            <button class="primario largo" type="submit">Criar campanha (pausada)</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= Configurações ================= -->
+    <section class="aba" id="aba-config" hidden>
+      <form class="cartao" id="form-config">
+        <h2>Escritório</h2>
+        <div class="form-grade">
+          <label>Nome<input data-cfg="escritorio.nome"></label>
+          <label>Advogado(a)<input data-cfg="escritorio.advogado"></label>
+          <label>Nº OAB<input data-cfg="escritorio.oab_numero"></label>
+          <label>UF da OAB<select data-cfg="escritorio.oab_uf" data-ufs></select></label>
+          <label class="largo">Site (página de destino dos anúncios)<input data-cfg="escritorio.site" type="url"></label>
+        </div>
+        <h2>Intimações (DJE)</h2>
+        <div class="form-grade">
+          <label>Dias retroativos na busca<input data-cfg="dje.dias_retroativos" type="number" min="1" max="90"></label>
+          <label class="largo">OABs adicionais monitoradas (JSON)<input data-cfg="dje.oabs_extras" data-json placeholder='[{"numero":"123456","uf":"RJ"}]'></label>
+        </div>
+        <p class="dica">A busca automática roda em dias úteis às 8h, 12h e 17h (horário de Brasília).</p>
+        <h2>Google Ads <span class="status" id="st-ads"></span></h2>
+        <div class="form-grade">
+          <label>ID da conta (xxx-xxx-xxxx)<input data-cfg="google_ads.customer_id"></label>
+          <label>ID da MCC (opcional)<input data-cfg="google_ads.login_customer_id"></label>
+        </div>
+        <p class="dica">Tokens e senhas do Google ficam nos <b>segredos do Worker</b> (nunca nesta página). Veja o README.</p>
+        <h2>Plataforma do escritório <span class="status" id="st-plat"></span></h2>
+        <div class="form-grade">
+          <label class="check largo"><input type="checkbox" data-cfg="plataforma.ativo"> Enviar clientes para a plataforma</label>
+          <label class="largo">URL base da API (https)<input data-cfg="plataforma.base_url" type="url"></label>
+          <label>Endpoint de clientes<input data-cfg="plataforma.endpoint_clientes"></label>
+          <label>Campo do ID na resposta<input data-cfg="plataforma.campo_id_resposta"></label>
+          <label>Cabeçalho do token<input data-cfg="plataforma.auth_header"></label>
+          <label>Prefixo do token<input data-cfg="plataforma.auth_prefix"></label>
+          <label class="largo">Mapeamento de campos (JSON)<textarea data-cfg="plataforma.mapeamento" data-json rows="3" placeholder='{"nome":"name","cpf_cnpj":"document"}'></textarea></label>
+        </div>
+        <button class="primario" type="submit">Salvar configurações</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="aviso" class="toast" role="status" hidden></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
